@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApplication_proiect.BLL.Interfaces;
+using WebApplication_proiect.DAL;
+using WebApplication_proiect.DAL.Entities;
 using WebApplication_proiect.DAL.Interfaces;
 
 namespace WebApplication_proiect.Controllers
@@ -28,9 +30,6 @@ namespace WebApplication_proiect.Controllers
             var list = await _exhibitionManager.ModifyExhibition();
             return Ok(list);
         }
-
-
-
 
     }
 }

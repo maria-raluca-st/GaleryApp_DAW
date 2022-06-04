@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApplication_proiect.DAL;
+using WebApplication_proiect.DAL.Entities;
 
 namespace WebApplication_proiect.Controllers
 {
@@ -53,6 +54,53 @@ namespace WebApplication_proiect.Controllers
                 .ToListAsync();
 
             return Ok(gallery);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteGallery([FromRoute] int id)
+        {
+            var gallery = await _context.Galleries.FindAsync(id);
+            if (gallery == null)
+            {
+                return NotFound();
+            }
+
+            _context.Galleries.Remove(gallery);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPost("AddGallery")]
+        public async Task<IActionResult> AddGallery([FromBody] Gallery gallery)
+        {
+
+            if (string.IsNullOrEmpty(gallery.Name))
+            {
+                return BadRequest("Name is null!");
+            }
+
+            await _context.Galleries.AddAsync(gallery);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
+        [HttpPut]
+        public async Task<IActionResult> Update([FromQuery] int id, [FromQuery] string name)
+        {
+            var gallery = await _context.Galleries.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+
+            gallery.Name = name;
+
+            _context.Entry(gallery).State = EntityState.Modified;
+
+            await _context.SaveChangesAsync();
+
+            var galleryV2 = await _context.Galleries.FirstOrDefaultAsync(x => x.Id == id);
+
+            return Ok();
         }
 
     }

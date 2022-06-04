@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using WebApplication_proiect.DAL;
+using WebApplication_proiect.DAL.Entities;
 
 namespace WebApplication_proiect.Controllers
 {
@@ -33,6 +35,53 @@ namespace WebApplication_proiect.Controllers
             }).ToList();
 
             return Ok(join);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteLocation([FromRoute] int id)
+        {
+            var location = await _context.Locations.FindAsync(id);
+            if (location == null)
+            {
+                return NotFound();
+            }
+
+            _context.Locations.Remove(location);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpPost("AddLocation")]
+        public async Task<IActionResult> AddLocation([FromBody] Location location)
+        {
+
+            if (string.IsNullOrEmpty(location.Street))
+            {
+                return BadRequest("Street is null!");
+            }
+
+            await _context.Locations.AddAsync(location);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
+        [HttpPut]
+        public async Task<IActionResult> Update([FromQuery] int id, [FromQuery] string street)
+        {
+            var location = await _context.Locations.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+
+            location.Street = street;
+
+            _context.Entry(location).State = EntityState.Modified;
+
+            await _context.SaveChangesAsync();
+
+            var locationV2 = await _context.Locations.FirstOrDefaultAsync(x => x.Id == id);
+
+            return Ok();
         }
     }
 }
