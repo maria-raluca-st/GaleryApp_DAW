@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace WebApplication_proiect.DAL.Repositories
 
         public async Task Update(Photographer photographer)
         {
-             _context.Photographers.Update(photographer);
+            _context.Photographers.Update(photographer);
             await _context.SaveChangesAsync();
         }
 
@@ -56,5 +57,27 @@ namespace WebApplication_proiect.DAL.Repositories
             return new List<PhotographerModels>();
         }
 
+
+        public async Task<Photographer> GetByName(string name)
+        {
+            var photographer = await _context.Photographers.Where(x => x.Name == name).FirstOrDefaultAsync();
+
+            return photographer;
+        }
+
+
+        public async Task<> GetGroupBy()
+        {
+            var exhibitionsByPhotographer = _context.PhotographerExhibitions.GroupBy(x => x.PhotographerId).Select(x => new
+            {
+                Key = x.Key,
+                Count = x.Count()
+            }).ToList();
+
+            return exhibitionsByPhotographer;
+        }
+
     }
+
+
 }

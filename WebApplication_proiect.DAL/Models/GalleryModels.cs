@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace WebApplication_proiect.DAL.Models
 {
-    public class PhotographerModels
+    public class GalleryModels
     {
         public string Name { get; set; }
-        public string PhotographyType { get; set; }
-        public string Equipment { get; set; }
-
+        public virtual ICollection<ExhibitionModels> Exhibitions { get; set; }
     }
 }
